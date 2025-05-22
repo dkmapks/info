@@ -1,18 +1,79 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NARCO.SYS – Gang Empire Online</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NarcoEmpire - Gra na telefon</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="app">
-    <h1>NARCO.SYS</h1>
-    <p>Witaj w świecie podziemnego imperium...</p>
-    <!-- Interfejs gry -->
+
+<h1>NarcoEmpire</h1>
+
+<div id="status">
+  <b>PLN:</b> <span id="pln">2500</span> zł &nbsp;|&nbsp;
+  <b>BTC:</b> <span id="btc">0.00</span> &nbsp;|&nbsp;
+  <b>Narkotyki:</b> <span id="drugs">0</span> g &nbsp;|&nbsp;
+  <b>Magazyn:</b> <span id="storageUsed">0</span>/<span id="storageMax">50</span> g
+  <br />
+  <b>Heat:</b> <span id="heatPercent">0</span>% 
+  <div id="heatBar"><div id="heatFill"></div></div>
+</div>
+
+<div class="flex-row">
+  <div class="section" id="darkwebSection">
+    <h2>Darkweb (Hurtownia)</h2>
+    <label for="dwBuyQty">Kup narkotyki (g):</label>
+    <input type="number" id="dwBuyQty" min="1" max="10000" value="1" />
+    <div><small>Cena za gram (hurtowa): <span id="dwBuyPrice">40</span> - 10 zł/g</small></div>
+    <button id="dwBuyBtn">Kup hurtowo</button>
+
+    <label for="dwSellQty" style="margin-top:15px;">Sprzedaj narkotyki (g):</label>
+    <input type="number" id="dwSellQty" min="1" max="10000" value="1" />
+    <div><small>Cena sprzedaży: 50 zł/g</small></div>
+    <button id="dwSellBtn">Sprzedaj hurtowo</button>
   </div>
-  <script src="js/main.js"></script>
+
+  <div class="section" id="cityShopSection">
+    <h2>Sklepy w mieście</h2>
+    <label for="csBuyQty">Kup narkotyki detalicznie (g):</label>
+    <input type="number" id="csBuyQty" min="1" max="500" value="1" />
+    <div><small>Cena: 25 zł/g</small></div>
+    <button id="csBuyBtn">Kup</button>
+
+    <label for="csSellQty" style="margin-top:15px;">Sprzedaj narkotyki detalicznie (g):</label>
+    <input type="number" id="csSellQty" min="1" max="500" value="1" />
+    <div><small>Cena: 27 zł/g</small></div>
+    <button id="csSellBtn">Sprzedaj</button>
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="section" id="storageSection">
+    <h2>Magazyn</h2>
+    <p>Pojemność magazynu: <span id="storageMaxDisplay">50</span> g</p>
+    <button id="upgradeStorageBtn">Ulepsz magazyn (+50g za 5000 zł)</button>
+  </div>
+
+  <div class="section" id="btcSection">
+    <h2>Bitcoin</h2>
+    <p>1 BTC ≈ 50 000 zł</p>
+    <button id="buyBTCBtn">Kup 1 BTC</button>
+    <button id="sellBTCBtn">Sprzedaj 1 BTC</button>
+  </div>
+</div>
+
+<div class="section" id="logSection">
+  <h2>Logi transakcji</h2>
+  <div id="log"></div>
+</div>
+
+<script src="js/game.js"></script>
+<script src="js/darkweb.js"></script>
+<script src="js/cityshop.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/bitcoin.js"></script>
+
 </body>
 </html>
