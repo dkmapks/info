@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NARCO.SYS – Gang Empire Online</title>
+<link rel="manifest" href="manifest.json" />
+<style>
+  body {
+    background-color: #0d0d0d;
+    color: #00ff88;
+    font-family: monospace;
+    margin: 0; padding: 20px;
+  }
+  .section {
+    margin-bottom: 20px;
+  }
+  button {
+    background-color: #111;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 10px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  input {
+    background-color: #111;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px;
+  }
+  #modMenu, #darkwebSection {
+    display: none;
+  }
+  #heatBar {
+    width: 100%;
+    background-color: #222;
+    margin: 10px 0;
+  }
+  #heatLevel {
+    height: 20px;
+    background-color: red;
+    width: 0%;
+  }
+</style>
+</head>
+<body>
+<h1>NARCO.SYS – Gang Empire Online</h1>
+
+<div class="section">
+  <p>Saldo: <span id="pln">2500</span> PLN | BTC: <span id="btc">0.00</span> | Heat: <span id="heatPercent">0</span>%</p>
+  <div id="heatBar"><div id="heatLevel"></div></div>
+  <button onclick="buyBTC()">Kup BTC</button>
+  <button onclick="sellBTC()">Sprzedaj BTC</button>
+</div>
+
+<div class="section">
+  <h3>Pojazdy</h3>
+  <button onclick="buyCar('Golf 4', 8000)">Kup Golf 4 (8000 PLN)</button>
+  <button onclick="buyCar('BMW E46', 20000)">Kup BMW E46 (20000 PLN)</button>
+  <button onclick="buyCar('Audi A6', 45000)">Kup Audi A6 (45000 PLN)</button>
+  <button onclick="buyCar('Mercedes GLE', 90000)">Kup Mercedes GLE (90000 PLN)</button>
+  <button onclick="sellCar()">Sprzedaj pojazd (-20%)</button>
+  <p>Obecny pojazd: <span id="car">Brak</span></p>
+</div>
+
+<div class="section">
+  <h3>Magazyn</h3>
+  <button onclick="upgradeStorage()">Ulepsz magazyn (+50 slotów za 5000 PLN)</button>
+  <p>Pojemność: <span id="storage">50</span> slotów</p>
+</div>
+
+<div class="section">
+  <h3>Nieruchomości</h3>
+  <button onclick="buyProperty('Kawalerka', 30000)">Kup Kawalerkę (30 000 PLN)</button>
+  <button onclick="buyProperty('Apartament', 120000)">Kup Apartament (120 000 PLN)</button>
+  <button onclick="buyProperty('Magazyn Przemysłowy', 250000)">Kup Magazyn Przemysłowy (250 000 PLN)</button>
+  <p>Posiadane nieruchomości: <span id="properties">Brak</span></p>
+</div>
+
+<div class="section">
+  <h3>Darkweb (handel nielegalny)</h3>
+  <button onclick="toggleDarkweb()">Pokaż/Ukryj Darkweb</button>
+  <div id="darkwebSection">
+    <p>Wybierz produkt do kupna lub sprzedaży:</p>
+    <button onclick="tradeItem('narkotyki', 'buy')">Kup narkotyki (1000 PLN/szt)</button>
+    <button onclick="tradeItem('narkotyki', 'sell')">Sprzedaj narkotyki (1500 PLN/szt)</button>
+    <button onclick="tradeItem('bron', 'buy')">Kup broń (5000 PLN/szt)</button>
+    <button onclick="tradeItem('bron', 'sell')">Sprzedaj broń (6000 PLN/szt)</button>
+    <p>Posiadane narkotyki: <span id="drugsCount">0</span></p>
+    <p>Posiadana broń: <span id="gunsCount">0</span></p>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Wpisz kod</h3>
+  <input type="text" id="cheatCode" placeholder="Kod" />
+  <button onclick="unlockModMenu()">Zatwierdź</button>
+</div>
+
+<div id="modMenu">
+  <h3>MOD MENU</h3>
+  <button onclick="addPLN(100000)">+100k PLN</button>
+  <button onclick="addBTC(10)">+10 BTC</button>
+  <button onclick="addDrugs(100)">+100 narkotyków</button>
+  <button onclick="addGuns(50)">+50 broni</button>
+  <button onclick="resetGame()">Reset</button>
+</div>
+
+<script>
+let pln = 2500;
+let btc = 0;
+let car = null;
+let storage = 50;
+let properties = [];
+let drugs = 0;
+let guns = 0;
+let heat = 0; // 0 - 100%
+
+function updateUI() {
+  document.getElementById('pln').textContent = pln.toFixed(2);
+  document.getElementById('btc').textContent = btc.toFixed(2);
+  document.getElementById('car').textContent = car ? car : 'Brak';
+  document.getElementById('storage').textContent = storage;
+  document.getElementById('properties').textContent = properties.length ? properties.join(', ') : 'Brak';
+  document.getElementById('drugsCount').textContent = drugs;
+  document.getElementById('gunsCount').textContent = guns;
+  document.getElementById('heatPercent').textContent = heat;
+  document.getElementById('heatLevel').style.width = heat + '%';
+}
+
+function buyBTC() {
+  let rate = 50000 + Math.random() * 4000 - 2000;
+  if (pln >= rate) {
+    pln -= rate;
+    btc += 1;
+    alert('Kupiono 1 BTC za ' + rate.toFixed(2) + ' PLN');
+  } else alert('Za mało kasy');
+  updateUI();
+  increaseHeat(2);
+}
+
+function sellBTC() {
+  let rate = 50000 + Math.random() * 4000 - 2000;
+  if (btc >= 1) {
+    btc -= 1;
+    pln += rate;
+    alert('Sprzedano 1 BTC za ' + rate.toFixed(2) + ' PLN');
+  } else alert('Nie masz BTC');
+  updateUI();
+  increaseHeat(2);
+}
+
+function buyCar(name, price) {
+  if (pln >= price) {
+    pln -= price;
+    car = name;
+    alert('Kupiono pojazd: ' + name);
+  } else alert('Za mało kasy');
+  updateUI();
+  increaseHeat(1);
+}
+
+function sellCar() {
+  if (car) {
+    const prices = {
+      'Golf 4': 8000,
+      'BMW E46': 20000,
+      'Audi A6': 45000,
+      'Mercedes GLE': 90000
+    };
+    let resale = prices[car] * 0.8;
+    pln += resale;
+    alert('Sprzedano ' + car + ' za ' + resale.toFixed(2) + ' PLN');
+    car = null;
+  } else alert('Nie masz pojazdu');
+  updateUI();
+  increaseHeat(1);
+}
+
+function upgradeStorage() {
+  if (pln >= 5000) {
+    storage += 50;
+    pln -= 5000;
+  } else alert('Za mało kasy');
+  updateUI();
+}
+
+function buyProperty(name, price) {
+  if (pln >= price) {
+    pln -= price;
+    properties.push(name);
+    alert('Zakupiono nieruchomość: ' + name);
+  } else alert('Za mało kasy');
+  updateUI();
+}
+
+function toggleDarkweb() {
+  const dw = document.getElementById('darkwebSection');
+  if (dw.style.display === 'none' || dw.style.display === '') {
+    dw.style.display = 'block';
+  } else {
+    dw.style.display = 'none';
+  }
+}
+
+function tradeItem(item, action) {
+  // Ceny
+  const prices = {
+    narkotyki: 1000,
+    bron: 5000
+  };
+  if (action === 'buy') {
+    if (pln >= prices[item]) {
+      if (item === 'narkotyki') {
+        if (drugs < storage) {
+          drugs++;
+          pln -= prices[item];
+          alert('Kupiono 1 sztukę narkotyków za ' + prices[item] + ' PLN');
+          increaseHeat(5);
+        } else {
+          alert('Magazyn pełny');
+        }
+      } else if (item === 'bron') {
+        if (guns < storage) {
+          guns++;
+          pln -= prices[item];
+          alert('Kupiono 1 sztukę broni za ' + prices[item] + ' PLN');
+          increaseHeat(7);
+        } else {
+          alert('Magazyn pełny');
+        }
+      }
+    } else alert('Za mało kasy');
+  } else if (action === 'sell') {
+    if (item === 'narkotyki') {
+      if (drugs > 0) {
+        drugs--;
+        pln += prices[item] * 1.5;
+        alert('Sprzedano 1 sztukę narkotyków za ' + (prices[item] * 1.5) + ' PLN');
+        decreaseHeat(5);
+      } else alert('Brak narkotyków');
+    } else if (item === 'bron') {
+      if (guns > 0) {
+        guns--;
+        pln += prices[item] * 1.2;
+        alert('Sprzedano 1 sztukę broni za ' + (prices[item] * 1.2) + ' PLN');
+        decreaseHeat(3);
+      } else alert('Brak broni');
+    }
+  }
+  updateUI();
+  checkEvents();
+}
+
+function increaseHeat(amount) {
+  heat += amount;
+  if (heat > 100) heat = 100;
+  updateUI();
+}
+
+function decreaseHeat(amount) {
+  heat -= amount;
+  if (heat < 0) heat = 0;
+  updateUI();
+}
+
+function checkEvents() {
+  // Losowe eventy
+  let chance = Math.random();
+  if (heat > 50 && chance < 0.2) {
+    alert('Uwaga! Nalot policji! Straciłeś 10% pieniędzy i 1 narkotyk.');
+    pln *= 0.9;
+    if (drugs > 0) drugs--;
+    heat = 30;
+    updateUI();
+  } else if (chance < 0.05) {
+    alert('Okazja! Kurs BTC wzrasta tymczasowo!');
+    // Przyspiesz kurs BTC - następna sprzedaż da więcej
+    btcBoost = true;
+    setTimeout(() => { btcBoost = false; }, 30000);
+  }
+}
+
+// MOD MENU
+function unlockModMenu() {
+  let code = document.getElementById('cheatCode').value;
+  if (code === '7432') {
+    document.getElementById('modMenu').style.display = 'block';
+    alert('MOD MENU odblokowane');
+  } else alert('Zły kod');
+}
+
+function addPLN(amount) {
+  pln += amount;
+  updateUI();
+}
+
+function addBTC(amount) {
+  btc += amount;
+  updateUI();
+}
+
+function addDrugs(amount) {
+  drugs += amount;
+  updateUI();
+}
+
+function addGuns(amount) {
+  guns += amount;
+  updateUI();
+}
+
+function resetGame() {
+  pln = 2500;
+  btc = 0;
+  car = null;
+  storage = 50;
+  properties = [];
+  drugs = 0;
+  guns = 0;
+  heat = 0;
+  document.getElementById('modMenu').style.display = 'none';
+  updateUI();
+}
+
+updateUI();
+
+</script>
+</body>
+</html>
