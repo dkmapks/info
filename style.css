@@ -1,0 +1,91 @@
+body {
+  margin: 0; padding: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #121212;
+  color: #eee;
+  user-select: none;
+}
+h1, h2 {
+  color: #00ff88;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.section {
+  background: #222;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+.section h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #00ff88;
+  padding-bottom: 5px;
+}
+label {
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1.1em;
+}
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 1.1em;
+  background-color: #00ff88;
+  border: none;
+  border-radius: 10px;
+  color: #121212;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+button:hover {
+  background-color: #00cc66;
+}
+#status {
+  background: #111;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+#heatBar {
+  height: 18px;
+  background: #333;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+#heatFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4444, #ffaa00);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+#log {
+  max-height: 140px;
+  overflow-y: auto;
+  background: #111;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+  line-height: 1.3em;
+}
+@media (min-width: 500px) {
+  .flex-row {
+    display: flex;
+    gap: 15px;
+  }
+  .flex-row > .section {
+    flex: 1;
+  }
+  button {
+    width: auto;
+  }
+}
